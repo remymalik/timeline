@@ -1,0 +1,186 @@
+let scene = "timeline"; 
+let circles = []; 
+let images = []; 
+let sceneImages = []; 
+let currentImageIndex = []; 
+let font;
+
+
+let isDragging = false; 
+let dragStartX; 
+let offsetX; 
+
+function preload() {
+	
+	font = loadFont('COMICSANS.TTF');
+  
+	//images for timeline covers
+  images[0] = loadImage('aeneas1.png'); 
+  images[1] = loadImage('founding8.png'); 
+  images[2] = loadImage('king7.png');
+  images[3] = loadImage('republic4.png'); 
+  images[4] = loadImage('plebs4.png'); 
+  images[5] = loadImage('han3.png'); 
+  images[6] = loadImage('caesar7.png');
+  images[7] = loadImage('aug5.png'); 
+  
+  //images for each scene
+	
+	//AENEAS
+  sceneImages[0] = [loadImage('aeneas1.png'), loadImage('aeneas2.png'), loadImage('aeneas3.png')]; 
+	
+	//FOUNDING OF ROME
+  sceneImages[1] = [loadImage('founding1.png'), loadImage('founding2.png'), loadImage('founding3.png'),
+									 loadImage('founding4.png'), loadImage('founding5.png'), loadImage('founding6.png'),
+									 loadImage('founding7.png'), loadImage('founding8.png')]; 
+	
+	//SEVEN KINGS OF ROME
+  sceneImages[2] = [loadImage('king1.png'), loadImage('king2.png'), loadImage('king3.png'), 
+	loadImage('king4.png'), loadImage('king5new.png'), loadImage('king6.png'), loadImage('king7.png')];
+	
+	//START OF THE REPUBLIC
+  sceneImages[3] = [loadImage('republic1.png'), loadImage('republic2png.png'), loadImage('republic3.png'), loadImage('republic4.png')];
+	
+	//STRUGGLE OF THE PLEBS
+  sceneImages[4] = [loadImage('plebs1.png'), loadImage('plebs2.png'), loadImage('plebs3.png'),
+									 loadImage('plebs5.png'), loadImage('plebs4.png')];
+	
+	//HANNIBAL BARCA
+  sceneImages[5] = [loadImage('han1.png'), loadImage('han2.png'), loadImage('han3.png'), loadImage('han4.png')];
+	
+	//GAIUS IULIUS CAESAR
+  sceneImages[6] = [loadImage('caesar1.png'), loadImage('caesar2.png'), loadImage('caesar3.png'), loadImage('caesar4.png'),
+									  loadImage('caesar5.png'), loadImage('caesar6.png'), loadImage('caesar7.png'), loadImage('caesar8.png')];
+	
+	//ROME BECOMES AN EMPIRE
+  sceneImages[7] = [loadImage('aug1.png'), loadImage('aug2.png'), loadImage('aug3.png'),
+									 loadImage('aug4png.png'), loadImage('aug5.png')];
+	
+}
+
+function setup() {
+  createCanvas(800, 600);
+  
+  // initialize timeline events
+  circles = [
+    { x: -400, y: 300, radius: 30, info: "Click to see more!", img: images[0], caption: "Aeneas", caption2: "12th Century BCE" },
+    { x: -200, y: 300, radius: 30, info: "Click to see more!", img: images[1], caption: "The Founding of Rome", caption2: "753 BCE" },
+    { x: 0, y: 300, radius: 30, info: "Click to see more!", img: images[2], caption: "The Seven Kings of Rome", caption2: "753 - 509 BCE" },
+    { x: 200, y: 300, radius: 30, info: "Click to see more!", img: images[3], caption: "Start of the Republic", caption2: "509 BCE" }, 
+    { x: 400, y: 300, radius: 30, info: "Click to see more!", img: images[4], caption: "Struggle of the Plebs", caption2: "500 - 287 BCE" }, 
+    { x: 600, y: 300, radius: 30, info: "Click to see more!", img: images[5], caption: "Hannibal Barca", caption2: "247 - 181 BCE" },
+    { x: 800, y: 300, radius: 30, info: "Click to see more!", img: images[6], caption: "Gaius Iulius Caesar", caption2: "100 - 44 BCE" },
+    { x: 1000, y: 300, radius: 30, info: "Click to see more!", img: images[7], caption: "Rome becomes an Empire", caption2: "31 BCE" }
+  ];
+  
+  //rotate through specific images
+  for (let i = 0; i < circles.length; i++) { 
+    currentImageIndex[i] = 0; // Start with the first image
+  }
+}
+
+function draw() {
+  background(220);
+
+  if (scene === "timeline") {
+    drawTimeline();
+  } else {
+    drawScene();
+  }
+}
+
+function drawTimeline() {
+  stroke(0);
+  strokeWeight(3);
+  line(0, 300, 800, 300);
+	textFont(font);
+	
+
+  // draw images and captions
+  for (let i = 0; i < circles.length; i++) {
+    noStroke();
+    let circle = circles[i];
+    imageMode(CENTER);
+    image(circle.img, circle.x, circle.y, circle.radius * 2, circle.radius * 2);
+
+    // draw the caption below the image
+    fill(0);
+    textSize(14);
+    textAlign(CENTER);
+    textStyle(NORMAL); 
+    text(circle.caption, circle.x, circle.y + circle.radius + 20);
+		text(circle.caption2, circle.x, circle.y + circle.radius - 75);
+   
+    if (dist(mouseX, mouseY, circle.x, circle.y) < circle.radius) {
+      fill(0, 0, 0, 50); 
+      noStroke();
+      ellipse(circle.x, circle.y, circle.radius * 2);
+    }
+  }
+	
+	//write caption
+	noStroke();
+	textSize(25);
+	text('Key Events in Ancient Rome, A Timeline by Remy Malik', 400, 30);
+	textSize(20);
+	text('select an event to explore!', 400, 60);
+}
+
+function drawScene() {
+  background(255);
+  fill(0);
+  textSize(32);
+  textAlign(CENTER, CENTER);
+  text(scene, width / 2, height / 2);
+
+  textSize(16);
+  text(circles[scene - 1].info, width / 2, 20);
+
+  
+  let imgIndex = currentImageIndex[scene - 1];
+  let imgSet = sceneImages[scene - 1];
+  image(imgSet[imgIndex], width / 2, height / 2, 500, 300);
+
+  // BACK button
+  textSize(20);
+  fill(100);
+  text("BACK", width / 2, height - 50);
+
+  if (mouseIsPressed && mouseX > width / 2 - 100 && mouseX < width / 2 + 100 && mouseY > height - 70 && mouseY < height - 30) {
+    scene = "timeline";
+  }
+}
+
+function mousePressed() {
+  if (scene === "timeline") {
+    for (let i = 0; i < circles.length; i++) {
+      let circle = circles[i];
+      if (dist(mouseX, mouseY, circle.x, circle.y) < circle.radius) {
+        scene = i + 1; 
+        return;
+      }
+    }
+    isDragging = true;
+    dragStartX = mouseX;
+    offsetX = 0;
+  } else {
+    // rotate the image in the current scene when mouse clicks
+    if (mouseX < width / 2 || mouseX > width / 2) {
+      currentImageIndex[scene - 1] = (currentImageIndex[scene - 1] + 1) % sceneImages[scene - 1].length;
+    }
+  }
+}
+
+function mouseDragged() {
+  if (isDragging) {
+    offsetX = mouseX - dragStartX;
+    for (let i = 0; i < circles.length; i++) {
+      circles[i].x += offsetX;
+    }
+    dragStartX = mouseX; 
+  }
+}
+
+function mouseReleased() {
+  isDragging = false;
+}
